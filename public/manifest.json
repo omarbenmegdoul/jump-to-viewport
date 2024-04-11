@@ -1,0 +1,15 @@
+{
+  "name": "views",
+  "version": "0.0.1",
+  "manifest_version": 1,
+  "author": "x",
+  "description": "An extension to save and activate zoom levels",
+  "icon": "/icon.svg",
+  "action": {
+    "title": "Views",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "height": 400,
+    "width": 300
+  }
+}
