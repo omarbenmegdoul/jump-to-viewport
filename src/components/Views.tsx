@@ -1,46 +1,62 @@
-import { useState } from "react";
-import { ContextWrapper } from "./ContextWrapper.tsx";
-import OBR, { Vector2, ViewportTransform } from "@owlbear-rodeo/sdk";
-
+import { useViewport } from '../viewport/useViewport.ts';
+import { ContextWrapper } from './ContextWrapper.tsx';
+import { SceneReadyContext } from '../context/SceneReadyContext.ts';
 
 export const Views = () => {
-  return (
-    <ContextWrapper>
-      <Content />
-    </ContextWrapper>
-  );
+    const { isReady } = SceneReadyContext();
+    return <ContextWrapper>{isReady ? <Content /> : 'loading'}</ContextWrapper>;
 };
 
-type StarredPosition = {
-  name: string;
-  transform: ViewportTransform;
-}
-
 const Content = () => {
-  const [starredViewports, setStarredViewports] = useState<StarredPosition[]>([])
-  const [selectedViewport, setSelectedViewport] = useState<ViewportTransform | null>(null)
-  const [draftViewportName, setDraftViewportName] = useState<string>("")
+    const {
+        reset,
+        deleteViewport,
+        starViewport,
+        setDraftViewportName,
+        starredViewports,
+        draftViewportName,
+        jumpTo,
+    } = useViewport();
+    return (
+        <div>
+            <ul>
+                <li key="default">
+                    <button onClick={reset} className="reset" aria-label="Reset viewport">
+                        Reset Viewport
+                    </button>
+                </li>
+                {starredViewports.map((v) => (
+                    <li className="row" key={v.id}>
+                        <button onClick={() => jumpTo(v.id)} className="wide-cell">
+                            {v.name}
+                        </button>
+                        <button
+                            onClick={() => deleteViewport(v.id)}
+                            aria-label={`Delete ${v.name}`}
+                            className="narrow-cell">
+                            ❌
+                        </button>
+                    </li>
+                ))}
 
-  const starViewport = async (name: string) => {
-    const [position, scale] = await Promise.all([OBR.viewport.getPosition(), OBR.viewport.getScale()]);
-    setStarredViewports(previous => [...previous, { name, transform: {position, scale} }])
-    setDraftViewportName("");
-  }
-  const deleteViewport = (name: string) => {
-    
-    setStarredViewports(starredViewports.filter(v => v.name !== name))
-  }
-
-  return (
-    <>
-      <ul>
-        {starredViewports.map((v) => <li><button onClick={async () => await OBR.viewport.animateTo(v.transform)}>{v.name}
-        </button> <button onClick={() => deleteViewport(v.name)}>Del</button>
-        </li>)}
-      </ul>
-<input 
-      onChange={(ev)=>setDraftViewportName(ev.target.value)}/>
-
-      <button onClick={()=>starViewport(draftViewportName)}>OK</button></>
-  );
+                    <form className="row"
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            await starViewport(draftViewportName);
+                        }}>
+                        <input
+                            aria-label="Viewport Name"
+                            placeholder="Enter viewport name"
+                            value={draftViewportName}
+                            onChange={(ev) => setDraftViewportName(ev.target.value)}
+                            className="wide-cell"
+                        />
+                        <button className="narrow-cell" type="submit">
+                            OK
+                        </button>
+                    </form>
+ 
+            </ul>
+        </div>
+    );
 };

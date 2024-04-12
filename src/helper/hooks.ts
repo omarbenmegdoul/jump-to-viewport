@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 // See https://usehooks.com/useLocalStorage
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = useState<T>(() => {
-        if (typeof window === "undefined") {
+        if (typeof window === 'undefined') {
             return initialValue;
         }
         try {
@@ -27,10 +27,10 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
             // Save state
             setStoredValue(valueToStore);
             // Save to local storage
-            if (typeof window !== "undefined") {
+            if (typeof window !== 'undefined') {
                 window.localStorage.setItem(key, JSON.stringify(valueToStore));
                 // to trigger the event in the tab changing the localStorage
-                const event = new StorageEvent("storage", {
+                const event = new StorageEvent('storage', {
                     key: key,
                     newValue: JSON.stringify(valueToStore),
                 });
