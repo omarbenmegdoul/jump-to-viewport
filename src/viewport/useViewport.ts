@@ -1,26 +1,30 @@
 import { useEffect, useState } from 'react';
 import OBR from '@owlbear-rodeo/sdk';
-import { SceneMetadata, id, validMetadata } from '../helper/types';
+import {
+    SceneMetadata,
+    StarredPosition,
+    metadataId,
+    validMetadata,
+} from '../helper/types';
 
 const makeId = () => {
-    return Date.now();
+    return crypto.randomUUID();
 };
 const reset = async () => {
     await OBR.viewport.reset();
 };
 
 const starred = (metadata: SceneMetadata | null) =>
-    metadata && metadata[id].starredViewports ? metadata[id].starredViewports : [];
+    metadata && metadata[metadataId].starredViewports ? metadata[metadataId].starredViewports : [];
 
 export const useViewport = () => {
-    const [draftViewportName, setDraftViewportName] = useState<string>('');
-    const [metadata, setMetadata] = useState<SceneMetadata | null>(null);
+    const defaultSceneMetadata = { [metadataId]: { starredViewports: [] } };
+    const [metadata, setMetadata] = useState<SceneMetadata>(defaultSceneMetadata);
     useEffect(() => {
         const fetchMetadata = async () => {
-            const metaData = await OBR.scene.getMetadata();
-
-            if (validMetadata(metaData)) {
-                setMetadata(metaData);
+            const sceneMetadata = await OBR.scene.getMetadata();
+            if (validMetadata(sceneMetadata)) {
+                setMetadata(sceneMetadata);
             }
         };
         fetchMetadata();
@@ -28,13 +32,15 @@ export const useViewport = () => {
 
     useEffect(() => {
         return OBR.scene.onMetadataChange((m) => {
-            if (!validMetadata(m)) {
-                throw new Error('Received invalid scene metadata from OBR.');
-            }
-
-            if (JSON.stringify(starred(m)) !== JSON.stringify(starred(metadata))) {
-                setMetadata(m);
-            }
+            const obrMetadata = m as unknown as SceneMetadata;
+            
+            // metadata is locked to default in this useEffect
+            setMetadata((prev) => {
+                if (JSON.stringify(starred(obrMetadata)) !== JSON.stringify(starred(prev))) {
+                    return starred(obrMetadata).length ? obrMetadata : defaultSceneMetadata;
+                }
+                return prev;
+            });
         });
     }, []);
 
@@ -44,34 +50,31 @@ export const useViewport = () => {
             OBR.viewport.getScale(),
         ]);
         await OBR.scene.setMetadata({
-            [id]: {
+            [metadataId]: {
                 starredViewports: [
                     ...starred(metadata),
                     { id: makeId(), name: viewportName, transform: { position, scale } },
                 ],
             },
         });
-        setDraftViewportName('');
     };
 
-    const deleteViewport = async (viewportId: number) => {
-        const filtered = starred(metadata).filter((v) => v.id !== viewportId);
+    const deleteViewport = async (viewport: StarredPosition) => {
+        const filtered = starred(metadata).filter((v) => v.id !== viewport.id);
         await OBR.scene.setMetadata({
-            [id]: { starredViewports: filtered.length ? null : filtered },
+            [metadataId]: { starredViewports: filtered.length ? filtered : undefined },
         });
     };
 
-    const jumpTo = async (viewportId: number) => {
-        const transform = starred(metadata).find((v) => v.id === viewportId)?.transform;
+    const jumpTo = async ({ id }: StarredPosition) => {
+        const transform = starred(metadata).find((v) => v.id === id)?.transform;
         if (!transform) {
-            throw new Error(`No viewport with id ${id} exists`);
+            throw new Error(`No viewport with id ${metadataId} exists`);
         }
         await OBR.viewport.animateTo(transform);
     };
     return {
         starredViewports: starred(metadata),
-        draftViewportName,
-        setDraftViewportName,
         starViewport,
         deleteViewport,
         reset,

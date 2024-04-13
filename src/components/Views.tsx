@@ -1,6 +1,7 @@
 import { useViewport } from '../viewport/useViewport.ts';
 import { ContextWrapper } from './ContextWrapper.tsx';
 import { SceneReadyContext } from '../context/SceneReadyContext.ts';
+import { useState } from 'react';
 
 export const Views = () => {
     const { isReady } = SceneReadyContext();
@@ -12,11 +13,13 @@ const Content = () => {
         reset,
         deleteViewport,
         starViewport,
-        setDraftViewportName,
         starredViewports,
-        draftViewportName,
+
         jumpTo,
     } = useViewport();
+
+    const [draftViewportName, setDraftViewportName] = useState<string>('');
+
     return (
         <div>
             <ul>
@@ -27,11 +30,11 @@ const Content = () => {
                 </li>
                 {starredViewports.map((v) => (
                     <li className="row" key={v.id}>
-                        <button onClick={() => jumpTo(v.id)} className="wide-cell">
+                        <button onClick={() => jumpTo(v)} className="wide-cell">
                             {v.name}
                         </button>
                         <button
-                            onClick={() => deleteViewport(v.id)}
+                            onClick={() => deleteViewport(v)}
                             aria-label={`Delete ${v.name}`}
                             className="narrow-cell">
                             ❌
@@ -39,23 +42,23 @@ const Content = () => {
                     </li>
                 ))}
 
-                    <form className="row"
-                        onSubmit={async (e) => {
-                            e.preventDefault();
-                            await starViewport(draftViewportName);
-                        }}>
-                        <input
-                            aria-label="Viewport Name"
-                            placeholder="Enter viewport name"
-                            value={draftViewportName}
-                            onChange={(ev) => setDraftViewportName(ev.target.value)}
-                            className="wide-cell"
-                        />
-                        <button className="narrow-cell" type="submit">
-                            OK
-                        </button>
-                    </form>
- 
+                <form
+                    className="row"
+                    onSubmit={async (e) => {
+                        e.preventDefault();
+                        await starViewport(draftViewportName);
+                    }}>
+                    <input
+                        aria-label="Viewport Name"
+                        placeholder="Enter viewport name"
+                        value={draftViewportName}
+                        onChange={(ev) => setDraftViewportName(ev.target.value)}
+                        className="wide-cell"
+                    />
+                    <button className="narrow-cell" type="submit" disabled={!draftViewportName || starredViewports.map(({name})=>name).includes(draftViewportName)}>
+                        OK
+                    </button>
+                </form>
             </ul>
         </div>
     );

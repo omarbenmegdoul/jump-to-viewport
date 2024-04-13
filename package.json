@@ -1,6 +1,6 @@
 {
-  "name": "views",
-  "private": true,
+  "name": "jump-to-viewport",
+  "private": false,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
