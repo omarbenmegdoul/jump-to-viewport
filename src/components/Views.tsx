@@ -2,6 +2,7 @@ import { useViewport } from '../viewport/useViewport.ts';
 import { ContextWrapper } from './ContextWrapper.tsx';
 import { SceneReadyContext } from '../context/SceneReadyContext.ts';
 import { useState } from 'react';
+import { usePlayerContext } from '../context/PlayerContext.ts';
 
 export const Views = () => {
     const { isReady } = SceneReadyContext();
@@ -17,6 +18,8 @@ const Content = () => {
 
         jumpTo,
     } = useViewport();
+
+    const { id: playerId, role } = usePlayerContext();
 
     const [draftViewportName, setDraftViewportName] = useState<string>('');
 
@@ -36,7 +39,10 @@ const Content = () => {
                         <button
                             onClick={() => deleteViewport(v)}
                             aria-label={`Delete ${v.name}`}
-                            className="narrow-cell">
+                            className="narrow-cell"
+                            disabled={Boolean(
+                                role !== 'GM' && v.playerId && playerId !== v.playerId,
+                            )}>
                             ❌
                         </button>
                     </li>
@@ -55,7 +61,13 @@ const Content = () => {
                         onChange={(ev) => setDraftViewportName(ev.target.value)}
                         className="wide-cell"
                     />
-                    <button className="narrow-cell" type="submit" disabled={!draftViewportName || starredViewports.map(({name})=>name).includes(draftViewportName)}>
+                    <button
+                        className="narrow-cell"
+                        type="submit"
+                        disabled={
+                            !draftViewportName ||
+                            starredViewports.map(({ name }) => name).includes(draftViewportName)
+                        }>
                         OK
                     </button>
                 </form>

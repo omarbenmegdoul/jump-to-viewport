@@ -8,9 +8,10 @@ export interface SceneMetadata {
 }
 
 export type StarredPosition = {
-    id: number;
+    id: string;
     name: string;
     transform: ViewportTransform;
+    playerId?: string;
 };
 
 export function validMetadata(value: unknown): value is SceneMetadata {

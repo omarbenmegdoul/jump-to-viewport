@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import OBR from '@owlbear-rodeo/sdk';
-import {
-    SceneMetadata,
-    StarredPosition,
-    metadataId,
-    validMetadata,
-} from '../helper/types';
+import { SceneMetadata, StarredPosition, metadataId, validMetadata } from '../helper/types';
+import { usePlayerContext } from '../context/PlayerContext';
 
 const makeId = () => {
     return crypto.randomUUID();
@@ -18,6 +14,7 @@ const starred = (metadata: SceneMetadata | null) =>
     metadata && metadata[metadataId].starredViewports ? metadata[metadataId].starredViewports : [];
 
 export const useViewport = () => {
+    const { id: playerId } = usePlayerContext();
     const defaultSceneMetadata = { [metadataId]: { starredViewports: [] } };
     const [metadata, setMetadata] = useState<SceneMetadata>(defaultSceneMetadata);
     useEffect(() => {
@@ -33,7 +30,7 @@ export const useViewport = () => {
     useEffect(() => {
         return OBR.scene.onMetadataChange((m) => {
             const obrMetadata = m as unknown as SceneMetadata;
-            
+
             // metadata is locked to default in this useEffect
             setMetadata((prev) => {
                 if (JSON.stringify(starred(obrMetadata)) !== JSON.stringify(starred(prev))) {
@@ -53,7 +50,7 @@ export const useViewport = () => {
             [metadataId]: {
                 starredViewports: [
                     ...starred(metadata),
-                    { id: makeId(), name: viewportName, transform: { position, scale } },
+                    { id: makeId(), name: viewportName, transform: { position, scale }, playerId },
                 ],
             },
         });
