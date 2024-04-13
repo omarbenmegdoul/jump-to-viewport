@@ -1,12 +1,12 @@
 {
-  "name": "views",
+  "name": "jump-to-viewport",
   "version": "0.0.1",
   "manifest_version": 1,
   "author": "x",
-  "description": "An extension to save and activate zoom levels",
+  "description": "An extension to bookmark views in your scene",
   "icon": "/icon.svg",
   "action": {
-    "title": "Views",
+    "title": "Jump to Viewport",
     "icon": "/icon.svg",
     "popover": "/",
     "height": 400,
