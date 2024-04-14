@@ -9,35 +9,153 @@ ul {
     list-style-type: none;
     padding-left: 0;
     padding-right: 0;
+}
+
+.extension-section {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     gap: 0.25rem;
-    width: 100%;
+    max-width: 100%;
     max-height: 100%;
 }
 
 .row {
     display: flex;
     flex-direction: row;
+    gap: 0.25rem;
     justify-content: space-between;
+    max-width: 100%;
 }
 button,
 input {
     min-height: $grid-element-height;
 }
 
+input {
+    width: 80%;
+}
+
+button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+}
+
+.space-evenly {
+    justify-content: space-evenly;
+}
+
+.flex-row {
+    flex-direction: row;
+    display: flex;
+}
+
 .reset {
     width: 100%;
 }
 .wide-cell {
-    width: calc(80% - 0.25rem);
+    flex: 1 1 auto;
+    width: 80%;
+    max-width: calc(80% - 0.5rem);
 }
 .narrow-cell {
-    width: 20%;
+    flex: 0 0 0.2;
+    min-width: 20%;
 }
 .owned {
     border-width: 0.125rem;
     border-style: solid;
     border-radius: 0.5rem;
+}
+
+@keyframes pulse {
+    0%,
+    15%,
+    85%,
+    100% {
+        border-color: #fab;
+    }
+    50% {
+        border-color: #d24; /* A lighter shade of red */
+    }
+}
+
+.filters-section {
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.pulse-border {
+    animation: pulse 1.2s infinite; /* Adjust the duration (2s) as needed */
+    border-style: solid; /* Ensure the border is visible */
+    border-width: 2px; /* Example border width, adjust as necessary */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 1.5rem;
+    height: 0.75rem;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: -4px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border: 2px #ccc solid;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: '';
+    height: 0.75rem;
+    width: 0.75rem;
+    background-color: white;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: #2196f3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(calc(0.75rem - 4px));
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.material-symbols-outlined {
+    font-size: 1.25rem;
 }
