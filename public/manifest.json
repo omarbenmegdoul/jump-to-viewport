@@ -1,8 +1,8 @@
 {
   "name": "jump-to-viewport",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "manifest_version": 1,
-  "author": "x",
+  "author": "Omar Benmegdoul",
   "description": "An extension to bookmark views in your scene",
   "icon": "/icon.svg",
   "action": {
