@@ -3,6 +3,9 @@ import { ContextWrapper } from './ContextWrapper.tsx';
 import { SceneReadyContext } from '../context/SceneReadyContext.ts';
 import { useState } from 'react';
 import { usePlayerContext } from '../context/PlayerContext.ts';
+import { usePartyContext } from '../context/PartyContext.ts';
+import { StarredPosition } from '../helper/types.ts';
+import { Player } from '@owlbear-rodeo/sdk';
 
 export const Views = () => {
     const { isReady } = SceneReadyContext();
@@ -19,10 +22,10 @@ const Content = () => {
         jumpTo,
     } = useViewport();
 
-    const { id: playerId, role } = usePlayerContext();
-
     const [draftViewportName, setDraftViewportName] = useState<string>('');
-
+    const { players } = usePartyContext();
+    const currentUser = usePlayerContext();
+    const allPlayers = [currentUser, ...(players ?? [])];
     return (
         <div>
             <ul>
@@ -31,23 +34,12 @@ const Content = () => {
                         Reset Viewport
                     </button>
                 </li>
-                {starredViewports.map((v) => (
-                    <li className="row" key={v.id}>
-                        <button onClick={() => jumpTo(v)} className="wide-cell">
-                            {v.name}
-                        </button>
-                        <button
-                            onClick={() => deleteViewport(v)}
-                            aria-label={`Delete ${v.name}`}
-                            className="narrow-cell"
-                            disabled={Boolean(
-                                role !== 'GM' && v.playerId && playerId !== v.playerId,
-                            )}>
-                            ❌
-                        </button>
-                    </li>
-                ))}
 
+                {allPlayers?.map((player) => (
+                    <PlayerControls
+                        {...{ player, currentUser, deleteViewport, starredViewports, jumpTo }}
+                    />
+                ))}
                 <form
                     className="row"
                     onSubmit={async (e) => {
@@ -75,3 +67,67 @@ const Content = () => {
         </div>
     );
 };
+
+type ViewportHandler = (viewport: StarredPosition) => Promise<void>;
+type ViewportControlProps = {
+    viewport: StarredPosition;
+    deleteViewport: ViewportHandler;
+    jumpTo: ViewportHandler;
+    color: string;
+    disableDeletion: boolean;
+};
+export const ViewportControl: React.FC<ViewportControlProps> = ({
+    viewport,
+    jumpTo,
+    color,
+    deleteViewport,
+    disableDeletion,
+}) => (
+    <li className="row" key={viewport.id}>
+        <button
+            onClick={() => jumpTo(viewport)}
+            className="wide-cell owned"
+            style={{ border: `2px ${color} solid` }}>
+            {viewport.name}
+        </button>
+        <button
+            onClick={() => deleteViewport(viewport)}
+            aria-label={`Delete ${viewport.name}`}
+            className="narrow-cell"
+            disabled={disableDeletion}>
+            🗑️
+        </button>
+    </li>
+);
+
+type PlayerControlProps = {
+    player: Player;
+    starredViewports: StarredPosition[];
+    currentUser: Player;
+    deleteViewport: ViewportHandler;
+    jumpTo: ViewportHandler;
+};
+export const PlayerControls: React.FC<PlayerControlProps> = ({
+    player,
+    starredViewports,
+    currentUser,
+    deleteViewport,
+    jumpTo,
+}) =>
+    starredViewports
+        .filter((v) => v?.playerId === player.id)
+        .map((viewport) => (
+            <ViewportControl
+                {...{
+                    viewport,
+                    deleteViewport,
+                    jumpTo,
+                    color: player.color,
+                    disableDeletion: Boolean(
+                        currentUser.role !== 'GM' &&
+                            viewport.playerId &&
+                            currentUser.id !== viewport.playerId,
+                    ),
+                }}
+            />
+        ));

@@ -24,7 +24,7 @@ ul {
 }
 button,
 input {
-    height: $grid-element-height;
+    min-height: $grid-element-height;
 }
 
 .reset {
@@ -35,4 +35,9 @@ input {
 }
 .narrow-cell {
     width: 20%;
+}
+.owned {
+    border-width: 0.125rem;
+    border-style: solid;
+    border-radius: 0.5rem;
 }
