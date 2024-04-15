@@ -34,7 +34,7 @@ export const ContextWrapper = (props: PropsWithChildren) => {
         return (
             <PluginGate>
                 <PlayerContext.Provider value={player}>
-                    <PartyContext.Provider value={{ players: party }}>
+                    <PartyContext.Provider value={{ players: party, setPlayers: setParty }}>
                         {props.children}
                     </PartyContext.Provider>
                 </PlayerContext.Provider>

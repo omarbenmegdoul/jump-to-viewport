@@ -13,9 +13,13 @@ const reset = async () => {
 const starred = (metadata: SceneMetadata | null) =>
     metadata && metadata[metadataId].starredViewports ? metadata[metadataId].starredViewports : [];
 
+const filters = (metadata: SceneMetadata | null) => metadata?.[metadataId]?.filters || {};
+
 export const useViewport = () => {
-    const { id: playerId } = usePlayerContext();
-    const defaultSceneMetadata = { [metadataId]: { starredViewports: [] } };
+    const { id: currentUserId } = usePlayerContext();
+    const defaultSceneMetadata: SceneMetadata = {
+        [metadataId]: { starredViewports: [], filters: {} },
+    };
     const [metadata, setMetadata] = useState<SceneMetadata>(defaultSceneMetadata);
     useEffect(() => {
         const fetchMetadata = async () => {
@@ -30,11 +34,12 @@ export const useViewport = () => {
     useEffect(() => {
         return OBR.scene.onMetadataChange((m) => {
             const obrMetadata = m as unknown as SceneMetadata;
-
             // metadata is locked to default in this useEffect
             setMetadata((prev) => {
-                if (JSON.stringify(starred(obrMetadata)) !== JSON.stringify(starred(prev))) {
-                    return starred(obrMetadata).length ? obrMetadata : defaultSceneMetadata;
+                if (JSON.stringify(obrMetadata[metadataId]) !== JSON.stringify(prev[metadataId])) {
+                    return starred(obrMetadata).length || Object.keys(filters(obrMetadata)).length
+                        ? obrMetadata
+                        : defaultSceneMetadata;
                 }
                 return prev;
             });
@@ -48,9 +53,15 @@ export const useViewport = () => {
         ]);
         await OBR.scene.setMetadata({
             [metadataId]: {
+                filters: filters(metadata),
                 starredViewports: [
                     ...starred(metadata),
-                    { id: makeId(), name: viewportName, transform: { position, scale }, playerId },
+                    {
+                        id: makeId(),
+                        name: viewportName,
+                        transform: { position, scale },
+                        playerId: currentUserId,
+                    },
                 ],
             },
         });
@@ -59,7 +70,10 @@ export const useViewport = () => {
     const deleteViewport = async (viewport: StarredPosition) => {
         const filtered = starred(metadata).filter((v) => v.id !== viewport.id);
         await OBR.scene.setMetadata({
-            [metadataId]: { starredViewports: filtered.length ? filtered : undefined },
+            [metadataId]: {
+                starredViewports: filtered.length ? filtered : undefined,
+                filters: filters(metadata),
+            },
         });
     };
 
@@ -70,11 +84,51 @@ export const useViewport = () => {
         }
         await OBR.viewport.animateTo(transform);
     };
+
+    const filterPlayer = async (filteredPlayerId: string, show: boolean) => {
+        const filtersWithUpdate = {
+            ...filters(metadata),
+            [currentUserId]: {
+                ...filters(metadata)[currentUserId],
+                players: {
+                    ...(filters(metadata)[currentUserId]?.players || {}),
+                    [filteredPlayerId]: show,
+                },
+            },
+        };
+
+        await OBR.scene.setMetadata({
+            [metadataId]: { starredViewports: starred(metadata), filters: filtersWithUpdate },
+        });
+    };
+
+    const filterAbsent = async (show: boolean) => {
+      const filtersWithUpdate = {
+          ...filters(metadata),
+          [currentUserId]: {
+              ...filters(metadata)[currentUserId],
+              absents: show
+          },
+      };
+      await OBR.scene.setMetadata({
+          [metadataId]: { starredViewports: starred(metadata), filters: filtersWithUpdate },
+      });
+  };
+
+    // type problem here? should not need ?? {}
+    const filteredPlayerIds = Object.entries(filters(metadata)[currentUserId]?.players ?? {})
+        .filter(([_, v]) => !v)
+        .map(([k]) => k);
+
     return {
         starredViewports: starred(metadata),
         starViewport,
         deleteViewport,
         reset,
         jumpTo,
+        filterPlayer,
+        filterAbsent,
+        filteredPlayerIds,
+        showAbsentPlayers:  filters(metadata)?.[currentUserId]?.absents
     };
 };
