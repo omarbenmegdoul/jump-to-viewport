@@ -43,7 +43,8 @@ function isUserFilter(obj: unknown): obj is UserFilter {
 }
 
 // Type guard for the filters key in SceneMetadata
-function isValidFiltersKey(obj: unknown): obj is Record<string, UserFilter> {
+// unused :(
+export function isValidFiltersKey(obj: unknown): obj is Record<string, UserFilter> {
     if (!isRecord(obj)) return false;
     for (const key in obj) {
         if (!isUserFilter(obj[key])) {
