@@ -23,6 +23,8 @@ const Content = () => {
         filteredPlayerIds,
         jumpTo,
         filterPlayer,
+        filterAbsent,
+        showAbsentPlayers
     } = useViewport();
 
     const [draftViewportName, setDraftViewportName] = useState<string>('');
@@ -37,34 +39,53 @@ const Content = () => {
                     <Button onClick={reset} className="wide-cell" aria-label="Reset viewport">
                         Reset Viewport
                     </Button>
-                    <Button className="narrow-cell" onClick={() => setShowFilters((prev) => !prev)}>
+                    <Button aria-label={showFilters ? "Hide filters" : "Show filters"} className="narrow-cell" onClick={() => setShowFilters((prev) => !prev)}>
                         <Icon name="filter_list" />
                     </Button>
                 </div>
                 {showFilters && (
-                    <div className="filters-section flex-row">
-                        {allPlayers?.map((player) => (
-                            <label className="switch" key={player.id}>
-                                <input
-                                    type="checkbox"
-                                    checked={!filteredPlayerIds.includes(player.id)}
-                                    onChange={(ev) => {
-                                        filterPlayer(player.id, ev.target.checked);
-                                    }}
-                                />
-                                <span
-                                    className="slider round"
-                                    style={
-                                        !filteredPlayerIds.includes(player.id)
-                                            ? {
-                                                  backgroundColor: player.color,
-                                                  borderColor: player.color,
-                                              }
-                                            : { borderColor: player.color }
-                                    }></span>
-                            </label>
-                        ))}
-                    </div>
+                    <div className="filter"><div className="filters-section flex-row">
+              {allPlayers?.map((player) => (
+                <label className="switch" key={player.id}>
+                  <span className="visually-hidden">Toggle player {player.name}</span>
+
+                  <input
+                    type="checkbox"
+                    checked={!filteredPlayerIds.includes(player.id)}
+                    onChange={(ev) => {
+                      filterPlayer(player.id, ev.target.checked);
+                    } }
+                    aria-labelledby={`playerToggleLabel-${player.id}`} />
+                  <span id={`playerToggleLabel-${player.id}`}
+                    className="slider round"
+                    style={!filteredPlayerIds.includes(player.id)
+                      ? {
+                        backgroundColor: player.color,
+                        borderColor: player.color,
+                      }
+                      : { borderColor: player.color }}></span>
+                </label>
+              ))}</div><div className="filters-section flex-row">
+                <span>Absent players:</span>
+                <label className="switch">
+                  <span className="visually-hidden">Toggle absent players</span>
+                  <input
+                    type="checkbox"
+                    checked={showAbsentPlayers}
+                    onChange={(ev) => {
+                      filterAbsent(ev.target.checked);
+                    } }
+                    aria-labelledby="absentToggleLabel" />
+                  <span id="absentToggleLabel"
+                    className="slider round"
+                    style={showAbsentPlayers
+                      ? {
+                        backgroundColor: "#111",
+                        borderColor: "#111",
+                      }
+                      : { borderColor: "#111" }}></span>
+                </label>
+              </div></div>
                 )}
             </section>
             <ul className="extension-section">
@@ -110,6 +131,7 @@ const Content = () => {
                         className="wide-cell"
                     />
                     <Button
+                      aria-label="Save this viewport"
                         className="narrow-cell"
                         type="submit"
                         disabled={
@@ -144,7 +166,7 @@ export const ViewportControl: React.FC<ViewportControlProps> = ({
         <li className="row" key={viewport.id}>
             {deleting ? (
                 <>
-                    <Button onClick={() => setDeleting(false)} className="narrow-cell owned">
+                    <Button aria-label="Cancel" onClick={() => setDeleting(false)} className="narrow-cell owned">
                         Cancel
                     </Button>
                     <Button
@@ -158,6 +180,7 @@ export const ViewportControl: React.FC<ViewportControlProps> = ({
             ) : (
                 <>
                     <Button
+                    aria-label={`Go to viewport: ${viewport.name}`}
                         onClick={() => jumpTo(viewport)}
                         className="wide-cell owned"
                         style={{ borderColor: color }}>

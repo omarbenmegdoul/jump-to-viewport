@@ -34,7 +34,7 @@ export const useViewport = () => {
     useEffect(() => {
         return OBR.scene.onMetadataChange((m) => {
             const obrMetadata = m as unknown as SceneMetadata;
-            console.log('❗ useViewport.ts:44 "change"'); // metadata is locked to default in this useEffect
+            // metadata is locked to default in this useEffect
             setMetadata((prev) => {
                 if (JSON.stringify(obrMetadata[metadataId]) !== JSON.stringify(prev[metadataId])) {
                     return starred(obrMetadata).length || Object.keys(filters(obrMetadata)).length
@@ -97,11 +97,23 @@ export const useViewport = () => {
             },
         };
 
-        console.log(filtersWithUpdate);
         await OBR.scene.setMetadata({
             [metadataId]: { starredViewports: starred(metadata), filters: filtersWithUpdate },
         });
     };
+
+    const filterAbsent = async (show: boolean) => {
+      const filtersWithUpdate = {
+          ...filters(metadata),
+          [currentUserId]: {
+              ...filters(metadata)[currentUserId],
+              absents: show
+          },
+      };
+      await OBR.scene.setMetadata({
+          [metadataId]: { starredViewports: starred(metadata), filters: filtersWithUpdate },
+      });
+  };
 
     // type problem here? should not need ?? {}
     const filteredPlayerIds = Object.entries(filters(metadata)[currentUserId]?.players ?? {})
@@ -115,8 +127,8 @@ export const useViewport = () => {
         reset,
         jumpTo,
         filterPlayer,
-        // filters: filters(metadata),
+        filterAbsent,
         filteredPlayerIds,
-        // metadata
+        showAbsentPlayers:  filters(metadata)?.[currentUserId]?.absents
     };
 };
