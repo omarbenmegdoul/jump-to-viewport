@@ -1,3 +1,6 @@
+## 0.2.2
+- Clear viewport naming field when submitting
+
 ## 0.2.1
 
 - Add Material Symbols for icons

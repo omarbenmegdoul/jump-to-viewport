@@ -122,6 +122,7 @@ const Content = () => {
                     onSubmit={async (e) => {
                         e.preventDefault();
                         await starViewport(draftViewportName);
+                        setDraftViewportName("");
                     }}>
                     <input
                         aria-label="Viewport Name"

@@ -8,6 +8,6 @@
 
 ## Feature Ideas
 
-- Confirmation behaviour before deleting a viewport.
-- Button to clear viewport name input field.
+- Clear input field when submitting
 - Import/export.
+- Handle scene duplication?
