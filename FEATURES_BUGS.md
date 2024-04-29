@@ -2,12 +2,12 @@
 
 ## Debt
 
-- Handle corrupt scene metadata without destroying valid bookmarks.
+- Handle corrupt scene metadata.
+  - currently a user with invalid scene metadata will destroy their own bookmarks
 
 ## Bugs
 
 ## Feature Ideas
 
-- Confirmation behaviour before deleting a viewport.
-- Button to clear viewport name input field.
 - Import/export.
+- Handle scene duplication.

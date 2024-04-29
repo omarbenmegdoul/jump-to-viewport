@@ -3,7 +3,7 @@ import { Vector2, ViewportTransform } from '@owlbear-rodeo/sdk';
 export const metadataId = 'com.omarbenmegdoul.jumpToViewport3/metadata';
 export interface SceneMetadata {
     [metadataId]: {
-        starredViewports: StarredPosition[] | undefined;
+        starredViewports: Array<StarredBox | StarredLegacy> | undefined;
         filters: Record<string, UserFilter>;
     };
 }
@@ -13,11 +13,25 @@ export type UserFilter = {
     absents: boolean;
 };
 
-export type StarredPosition = {
+export type Starred = {
     id: string;
     name: string;
-    transform: ViewportTransform;
     playerId?: string;
+};
+export type StarredLegacy = Starred & {
+    transform: ViewportTransform;
+};
+
+export type StarredBox = Starred & {
+    boundingCorners: { max: Vector2; min: Vector2 };
+};
+
+export const isStarredBox = (value: Starred & Record<string, unknown>): value is StarredBox => {
+    return (
+        isRecord(value.boundingCorners) &&
+        isVector2(value.boundingCorners.max) &&
+        isVector2(value.boundingCorners.min)
+    );
 };
 
 export function validMetadata(value: unknown): value is SceneMetadata {
@@ -55,7 +69,7 @@ export function isValidFiltersKey(obj: unknown): obj is Record<string, UserFilte
 }
 
 export function isViewportMetadata(value: unknown): value is SceneMetadata[typeof metadataId] {
-    return hasStarredViewport(value) && isArrayofStarredPositions(value.starredViewports);
+    return hasStarredViewport(value) && isArrayofStarred(value.starredViewports);
 }
 
 export const isObject = (value: unknown): value is object => {
@@ -107,7 +121,7 @@ function isViewportTransform(value: unknown): value is ViewportTransform {
     );
 }
 
-export function isStarredPosition(value: unknown): value is StarredPosition {
+export function isStarredLegacy(value: unknown): value is StarredLegacy {
     return (
         isObject(value) &&
         'id' in value &&
@@ -119,6 +133,17 @@ export function isStarredPosition(value: unknown): value is StarredPosition {
     );
 }
 
-function isArrayofStarredPositions(value: unknown): value is StarredPosition[] {
-    return value === undefined || (Array.isArray(value) && value.every(isStarredPosition));
+export const isStarredBase = (value: unknown): value is Starred => {
+return isObject(value) &&
+            'id' in value &&
+            typeof value.id === 'string' &&
+            'name' in value
+}
+
+export const isValidStar = (value:unknown): value is StarredBox|StarredLegacy => {
+  return isStarredBase(value) && (isStarredLegacy(value) || isStarredBox(value))
+} 
+
+function isArrayofStarred(value: unknown): value is StarredLegacy[] {
+    return value === undefined || (Array.isArray(value) && value.every(isValidStar));
 }
