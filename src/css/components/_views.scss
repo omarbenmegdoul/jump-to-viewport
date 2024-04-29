@@ -91,17 +91,17 @@ button {
 }
 
 .filter {
-  padding: 0.5rem 0.5rem 0 0.5rem;
-  gap: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items:stretch;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .filters-section {
-  gap: 0.5rem;
-  align-items: center;
-  font-size: 0.75rem;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.75rem;
 }
 
 .pulse-border {
@@ -144,8 +144,6 @@ button {
     transition: 0.4s;
 }
 
-
-
 input:checked + .slider:before {
     transform: translateX(calc(0.75rem));
 }
@@ -163,13 +161,13 @@ input:checked + .slider:before {
     font-size: 1.25rem;
 }
 .visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  border: 0 !important;
-  white-space: nowrap !important;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+    white-space: nowrap !important;
 }

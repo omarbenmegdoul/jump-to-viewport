@@ -2,12 +2,12 @@
 
 ## Debt
 
-- Handle corrupt scene metadata without destroying valid bookmarks.
+- Handle corrupt scene metadata.
+  - currently a user with invalid scene metadata will destroy their own bookmarks
 
 ## Bugs
 
 ## Feature Ideas
 
-- Clear input field when submitting
 - Import/export.
-- Handle scene duplication?
+- Handle scene duplication.
