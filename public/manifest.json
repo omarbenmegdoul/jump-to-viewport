@@ -1,12 +1,12 @@
 {
-  "name": "Jump to Viewport",
+  "name": "Viewport Presets",
   "version": "0.2.2",
   "manifest_version": 1,
   "author": "Omar Benmegdoul",
-  "description": "An extension to bookmark views in your scene",
+  "description": "Easily save and jump to areas of a scene",
   "icon": "/icon.svg",
   "action": {
-    "title": "Jump to Viewport",
+    "title": "Viewport Presets",
     "icon": "/icon.svg",
     "popover": "/",
     "height": 400,

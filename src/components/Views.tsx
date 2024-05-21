@@ -4,10 +4,10 @@ import { SceneReadyContext } from '../context/SceneReadyContext.ts';
 import { useState } from 'react';
 import { usePlayerContext } from '../context/PlayerContext.ts';
 import { usePartyContext } from '../context/PartyContext.ts';
-import { StarredBox, StarredLegacy } from '../helper/types.ts';
-import { Player } from '@owlbear-rodeo/sdk';
 import { Icon } from './atoms/Icon.tsx';
 import { Button } from './atoms/Button.tsx';
+import { ControlGroup } from './ControlGroup.tsx';
+import { Help } from './Help.tsx';
 
 export const Views = () => {
     const { isReady } = SceneReadyContext();
@@ -24,26 +24,42 @@ const Content = () => {
         jumpTo,
         filterPlayer,
         filterAbsent,
-        showAbsentPlayers
+        showAbsentPlayers,
+        jumpToPlayerItems,
     } = useViewport();
 
     const [draftViewportName, setDraftViewportName] = useState<string>('');
-    const { players } = usePartyContext();
+    const { players, nonGMPlayers } = usePartyContext();
     const currentUser = usePlayerContext();
     const allPlayers = [currentUser, ...(players ?? [])];
     const [showFilters, setShowFilters] = useState<boolean>(false);
+    const [showHelp, setShowHelp] = useState<boolean>(false);
+
     return (
         <div>
             <section className="extension-section">
                 <div className="row" key="default">
                     <Button onClick={reset} className="wide-cell" aria-label="Reset viewport">
-                        Reset Viewport
+                        Reset
+                    </Button>
+                    <Button
+                        onClick={jumpToPlayerItems}
+                        className="wide-cell"
+                        aria-label="Player Images"
+                        disabled={!Boolean(nonGMPlayers?.length)}>
+                        Player Images
                     </Button>
                     <Button
                         aria-label={showFilters ? 'Hide filters' : 'Show filters'}
-                        className="narrow-cell"
+                        className={`narrowest-cell ${showFilters ? 'enabled' : ''}`}
                         onClick={() => setShowFilters((prev) => !prev)}>
-                        <Icon name="filter_list" />
+                        <Icon name="filter_list" size="small" toggled={showFilters} />
+                    </Button>
+                    <Button
+                        aria-label={showHelp ? 'Hide help' : 'Show help'}
+                        className={`narrowest-cell ${showHelp ? 'enabled' : ''}`}
+                        onClick={() => setShowHelp((prev) => !prev)}>
+                        <Icon name="help" size="small" toggled={showHelp} />
                     </Button>
                 </div>
                 {showFilters && (
@@ -105,6 +121,7 @@ const Content = () => {
                     </div>
                 )}
             </section>
+            {showHelp && <Help/>}
             <ul className="extension-section">
                 {allPlayers
                     ?.filter(({ id }) => !filteredPlayerIds.includes(id))
@@ -163,90 +180,3 @@ const Content = () => {
         </div>
     );
 };
-
-type ViewportHandler = (viewport: StarredLegacy|StarredBox) => Promise<void>;
-type ViewportControlProps = {
-    viewport: StarredBox|StarredLegacy;
-    deleteViewport: ViewportHandler;
-    jumpTo: ViewportHandler;
-    color?: string;
-    disableDeletion: boolean;
-};
-export const ViewportControl: React.FC<ViewportControlProps> = ({
-    viewport,
-    jumpTo,
-    color,
-    deleteViewport,
-    disableDeletion,
-}) => {
-    const [deleting, setDeleting] = useState<boolean>(false);
-    return (
-        <li className="row" key={viewport.id}>
-            {deleting ? (
-                <>
-                    <Button
-                        aria-label="Cancel"
-                        onClick={() => setDeleting(false)}
-                        className="narrow-cell owned">
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={() => deleteViewport(viewport)}
-                        aria-label={`Delete ${viewport.name}`}
-                        className="wide-cell owned pulse-border"
-                        disabled={disableDeletion}>
-                        Delete {viewport.name}
-                    </Button>
-                </>
-            ) : (
-                <>
-                    <Button
-                        aria-label={`Go to viewport: ${viewport.name}`}
-                        onClick={() => jumpTo(viewport)}
-                        className="wide-cell owned"
-                        style={{ borderColor: color }}>
-                        {viewport.name}
-                    </Button>
-                    <Button
-                        onClick={() => setDeleting(true)}
-                        aria-label={`Delete ${viewport.name}`}
-                        className="narrow-cell"
-                        disabled={disableDeletion}>
-                        <Icon name="delete" />
-                    </Button>
-                </>
-            )}
-        </li>
-    );
-};
-
-type PlayerControlProps = {
-    color?: string;
-    viewports: Array<StarredBox|StarredLegacy>;
-    currentUser: Player;
-    deleteViewport: ViewportHandler;
-    jumpTo: ViewportHandler;
-};
-export const ControlGroup: React.FC<PlayerControlProps> = ({
-    viewports,
-    color,
-    currentUser,
-    deleteViewport,
-    jumpTo,
-}) =>
-    viewports.map((viewport) => (
-            <ViewportControl
-                {...{
-                    key: viewport.id,
-                    viewport,
-                    deleteViewport,
-                    jumpTo,
-                    color,
-                    disableDeletion: Boolean(
-                        currentUser.role !== 'GM' &&
-                            viewport.playerId &&
-                            currentUser.id !== viewport.playerId,
-                    ),
-                }}
-            />
-    ));

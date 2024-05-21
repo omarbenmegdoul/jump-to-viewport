@@ -4,6 +4,7 @@ import OBR, { Player } from '@owlbear-rodeo/sdk';
 export type PartyContextType = {
     players: Player[] | null;
     setPlayers: (p: Player[]) => void;
+    nonGMPlayers: Player[] | null;
 };
 
 export const PartyContext = createContext<PartyContextType | null>(null);

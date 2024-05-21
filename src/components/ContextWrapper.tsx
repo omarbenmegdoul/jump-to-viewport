@@ -34,7 +34,15 @@ export const ContextWrapper = (props: PropsWithChildren) => {
         return (
             <PluginGate>
                 <PlayerContext.Provider value={player}>
-                    <PartyContext.Provider value={{ players: party, setPlayers: setParty }}>
+                    <PartyContext.Provider
+                        value={{
+                            players: party,
+                            setPlayers: setParty,
+                            nonGMPlayers:
+                                [player, ...(party || [])].filter((player): player is Player =>
+                                    Boolean(player && player.role !== 'GM'),
+                                ) || null,
+                        }}>
                         {props.children}
                     </PartyContext.Provider>
                 </PlayerContext.Provider>

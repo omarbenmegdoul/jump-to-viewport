@@ -1,5 +1,9 @@
-export type IconProps = { name: string };
+export type IconProps = { name: string; size?: 'small'; toggled?: boolean };
 
-export const Icon: React.FC<IconProps> = ({ name }) => {
-    return <span className={`material-symbols-outlined`}>{name}</span>;
+export const Icon: React.FC<IconProps> = ({ name, size, toggled }) => {
+    return (
+        <span className={`material-symbols-outlined ${size || ''} ${toggled ? 'toggled' : ''}`}>
+            {name}
+        </span>
+    );
 };
