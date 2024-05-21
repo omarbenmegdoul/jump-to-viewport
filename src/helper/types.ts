@@ -26,6 +26,8 @@ export type StarredBox = Starred & {
     boundingCorners: { max: Vector2; min: Vector2 };
 };
 
+export type ViewportHandler = (viewport: StarredLegacy | StarredBox) => Promise<void>;
+
 export const isStarredBox = (value: Starred & Record<string, unknown>): value is StarredBox => {
     return (
         isRecord(value.boundingCorners) &&
@@ -134,15 +136,12 @@ export function isStarredLegacy(value: unknown): value is StarredLegacy {
 }
 
 export const isStarredBase = (value: unknown): value is Starred => {
-return isObject(value) &&
-            'id' in value &&
-            typeof value.id === 'string' &&
-            'name' in value
-}
+    return isObject(value) && 'id' in value && typeof value.id === 'string' && 'name' in value;
+};
 
-export const isValidStar = (value:unknown): value is StarredBox|StarredLegacy => {
-  return isStarredBase(value) && (isStarredLegacy(value) || isStarredBox(value))
-} 
+export const isValidStar = (value: unknown): value is StarredBox | StarredLegacy => {
+    return isStarredBase(value) && (isStarredLegacy(value) || isStarredBox(value));
+};
 
 function isArrayofStarred(value: unknown): value is StarredLegacy[] {
     return value === undefined || (Array.isArray(value) && value.every(isValidStar));

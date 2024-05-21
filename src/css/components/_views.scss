@@ -16,9 +16,9 @@ ul {
     flex-direction: column;
     flex-wrap: wrap;
     gap: 0.25rem;
-    max-width: 100%;
-    max-height: 100%;
 }
+
+
 
 .row {
     display: flex;
@@ -42,6 +42,10 @@ button {
     align-items: center;
     justify-content: center;
     font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
+button.toggled {
+    font-weight: 700;
 }
 
 .ellipsis {
@@ -71,6 +75,10 @@ button {
 .narrow-cell {
     flex: 0 0 0.2;
     min-width: 20%;
+}
+.narrowest-cell {
+    flex: 0 0 0.15;
+    min-width: 15%;
 }
 .owned {
     border-width: 0.125rem;
@@ -160,6 +168,13 @@ input:checked + .slider:before {
 .material-symbols-outlined {
     font-size: 1.25rem;
 }
+
+.material-symbols-outlined.small {
+    font-size: 1rem;
+}
+.material-symbols-outlined.toggled {
+  font-weight: 700;
+}
 .visually-hidden {
     position: absolute !important;
     width: 1px !important;
@@ -170,4 +185,23 @@ input:checked + .slider:before {
     clip: rect(0, 0, 0, 0) !important;
     border: 0 !important;
     white-space: nowrap !important;
+}
+.help {
+  // max-width: 80%;
+  min-height: 500px;
+  margin: 0px auto;
+  overflow-y: auto;
+}
+.help li {
+  font-size: 0.75rem !important;  
+  list-style-type: disc;
+  list-style-position: inside; /* bullets outside the content */
+  margin: 0.5em 0; /* vertical margins */
+  padding-left: 1rem; /* space between bullets and content */
+  
+}
+
+.help .material-symbols-outlined, .help .material-symbols-outlined.small {
+  font-size: 0.75rem !important;  
+
 }
