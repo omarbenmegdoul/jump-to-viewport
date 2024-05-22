@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Fix help text height.
+
 ## 1.0.0
 
 - Show help text.
