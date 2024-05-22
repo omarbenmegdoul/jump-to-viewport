@@ -18,8 +18,6 @@ ul {
     gap: 0.25rem;
 }
 
-
-
 .row {
     display: flex;
     flex-direction: row;
@@ -173,7 +171,7 @@ input:checked + .slider:before {
     font-size: 1rem;
 }
 .material-symbols-outlined.toggled {
-  font-weight: 700;
+    font-weight: 700;
 }
 .visually-hidden {
     position: absolute !important;
@@ -187,21 +185,18 @@ input:checked + .slider:before {
     white-space: nowrap !important;
 }
 .help {
-  // max-width: 80%;
-  min-height: 500px;
-  margin: 0px auto;
-  overflow-y: auto;
+    margin: 0px auto;
+    overflow-y: auto;
 }
 .help li {
-  font-size: 0.75rem !important;  
-  list-style-type: disc;
-  list-style-position: inside; /* bullets outside the content */
-  margin: 0.5em 0; /* vertical margins */
-  padding-left: 1rem; /* space between bullets and content */
-  
+    font-size: 0.75rem !important;
+    list-style-type: disc;
+    list-style-position: inside; /* bullets outside the content */
+    margin: 0.5em 0; /* vertical margins */
+    padding-left: 1rem; /* space between bullets and content */
 }
 
-.help .material-symbols-outlined, .help .material-symbols-outlined.small {
-  font-size: 0.75rem !important;  
-
+.help .material-symbols-outlined,
+.help .material-symbols-outlined.small {
+    font-size: 0.75rem !important;
 }

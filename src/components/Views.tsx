@@ -121,7 +121,7 @@ const Content = () => {
                     </div>
                 )}
             </section>
-            {showHelp && <Help/>}
+            {showHelp && <Help />}
             <ul className="extension-section">
                 {allPlayers
                     ?.filter(({ id }) => !filteredPlayerIds.includes(id))
