@@ -7,7 +7,7 @@ icon: https://raw.githubusercontent.com/omarbenmegdoul/jump-to-viewport/4729cda3
 tags:
   - tool
   - other
-manifest: https://viewportpresets.omarbenmegdoul.me
+manifest: https://viewportpresets.omarbenmegdoul.me/manifest.json
 learn-more: https://github.com/omarbenmegdoul/jump-to-viewport
 ---
 
@@ -17,12 +17,15 @@ _Viewport Presets_ lets you and your players create shortcuts to quickly navigat
 - Support: https://ko-fi.com/omarbenmegdoul
 
 ## Default presets
+<img src="https://github.com/omarbenmegdoul/jump-to-viewport/blob/publication/public/presets.gif?raw=true" alt="Default presets" width="600"/>
 
 - The _Reset View_ button pans to the default scene view.
 - When players control images (e.g. tokens), _Player Images_ jumps to wherever they are in the scene.
 
 ## Custom bookmarks
+<img src="https://github.com/omarbenmegdoul/jump-to-viewport/blob/publication/public/bookmarks.gif?raw=true" alt="Saving bookmarks" width="600"/>
 
 - Users can save bookmarks by typing into the input field. Bookmarks are color-coded by user.
   - Users can use the _Filter_ button to hide unnecessary bookmarks.
 - Players can only delete their own bookmarks. GMs can delete all bookmarks.
+<img src="https://github.com/omarbenmegdoul/jump-to-viewport/blob/publication/public/filters.gif?raw=true" alt="Toggling filters" width="600"/>
