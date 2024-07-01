@@ -6,7 +6,6 @@ image: https://github.com/omarbenmegdoul/jump-to-viewport/blob/main/public/hero.
 icon: https://raw.githubusercontent.com/omarbenmegdoul/jump-to-viewport/4729cda3c2f9e4d9c351cae70ed5d2f4713210d1/public/icon.svg
 tags:
   - tool
-  - other
 manifest: https://viewportpresets.omarbenmegdoul.me/manifest.json
 learn-more: https://github.com/omarbenmegdoul/jump-to-viewport
 ---
