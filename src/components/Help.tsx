@@ -4,7 +4,7 @@ export const Help = () => (
     <>
         {' '}
         <div>
-            Support: <a href="https://ko-fi.com/omarbenmegdoul">https://ko-fi.com/omarbenmegdoul</a>
+            Support: <a style={{color: "#4AE"}} target="_blank" href="https://ko-fi.com/omarbenmegdoul">https://ko-fi.com/omarbenmegdoul</a>
         </div>
         <ul className="help">
             <li>Use the "Reset View" button to move your viewport back to the scene default.</li>
